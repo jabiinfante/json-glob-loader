@@ -6,7 +6,22 @@
   "scripts": {
     "test": "mocha test/index.spec.js"
   },
-  "author": "Javier Infante <jabiinfante@gmail.com>",
+  "keywords": [
+    "webpack",
+    "loader",
+    "webpack-loader",
+    "json",
+    "glob"
+  ],
+  "homepage": "https://github.com/jabiinfante/json-glob-loader",
+  "author": {
+    "email": "jabiinfante@gmail.com",
+    "name": "Javier Infante"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jabiinfante/json-glob-loader"
+  },
   "license": "MIT",
   "dependencies": {
     "glob": "^7.1.3",
