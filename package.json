@@ -1,0 +1,21 @@
+{
+  "name": "json-glob-loader",
+  "version": "0.1.0",
+  "description": "webpack JSON loader which will search and resolve file paths expressed using glob patterns.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/index.spec.js"
+  },
+  "author": "Javier Infante <jabiinfante@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^7.1.3",
+    "loader-utils": "^1.1.0",
+    "path": "^0.12.7",
+    "schema-utils": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "should": "^13.2.3"
+  }
+}
