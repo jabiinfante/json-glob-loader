@@ -1,4 +1,5 @@
 [![npm][npm]][npm-url]
+[![Build Status](https://travis-ci.com/jabiinfante/json-glob-loader.svg?branch=master)](https://travis-ci.com/jabiinfante/json-glob-loader)
 
 # json-glob-loader
 
