@@ -12,6 +12,10 @@ const schema = {
     },
     baseDir: {
       type: "string"
+    },
+    globOptions : {
+      type: "object",
+      default: {}
     }
   }
 };
@@ -55,10 +59,10 @@ function resolveGlob(data, options) {
     }, {});
   } else if (typeof data === "string") {
     const items = glob
-      .sync(path.join(options.baseDir, data))
+      .sync(path.join(options.baseDir, data), options.globOptions)
       .map(_path => _path.substr(options.baseDir.length));
     // If glob returns nothing, let's assume no glob expression is used
-    return items.length && items.length > 1 ? items : data;
+    return items.length && items.length >= 1 ? items : data;
   } else {
     return data;
   }

@@ -88,6 +88,12 @@ module.exports = {
 
 * **baseDir**<string>: baseDir from where glob will be applied (omitted from the resultant JSON declaration).
 * **transformStringsToArray**<boolean>: if set to true, will replace strings outside Arrays, transforming this into Arrays (optional, false by default).
+* **globOptions**<object>: glob options to be applied on the glob method.
+
+## KNOWN ISSUES
+
+🙋 If no matches are found using a legit expression, then no replacement will be made; or any string would disappear.
+** Make sure there is at least one file on your folders... **
 
 ## testing
 

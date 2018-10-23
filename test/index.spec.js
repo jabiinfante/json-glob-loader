@@ -15,7 +15,7 @@ function load(content, params) {
 const opts = { baseDir: path.join(__dirname, "files/") };
 
 describe("json glob loader", () => {
-  it("returns empty objectn whe json empty JSON is used", () => {
+  it("returns empty object when json empty JSON is used", () => {
     load("{}", opts)
       .trim()
       .should.equal("{}");
@@ -86,5 +86,35 @@ describe("json glob loader", () => {
       ...opts,
       transformStringsToArray: true
     }).should.equal(JSON.stringify(expected));
+  });
+  it("return a single item array when only one item matches", () => {
+    const input = {
+      var1: ["*.1"]
+    };
+    const expected = {
+      var1: ["foo.1"]
+    };
+    load(JSON.stringify(input), opts).should.equal(JSON.stringify(expected));
+  });
+  it("return an array when a string matches a path and transformStringsToArray === true", () => {
+    const opts2 = { ...opts, transformStringsToArray: true};
+    const input = {
+      var1: "*"
+    };
+    const expected = {
+      var1: ["bar", "foo.1", "foo.2"]
+    };
+    load(JSON.stringify(input), opts2).should.equal(JSON.stringify(expected));
+  });
+  it("passes by and apply globOptions", () => {
+    const opts2 = { ...opts, globOptions : { ignore : "**/foo.2" } };
+    const input = {
+      var1: ["*"]
+    };
+    const expected = {
+      var1: ["bar", "foo.1"]
+    };
+
+    load(JSON.stringify(input), opts2).should.equal(JSON.stringify(expected));
   });
 });
