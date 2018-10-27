@@ -1,7 +1,9 @@
-const glob = require("glob"),
-  path = require("path");
-(getOptions = require("loader-utils").getOptions),
-  (validateOptions = require("schema-utils"));
+const
+  glob = require("glob"),
+  path = require("path"),
+  existsSync = require('fs').existsSync,
+  getOptions = require("loader-utils").getOptions
+  validateOptions = require("schema-utils");
 
 const schema = {
   type: "object",
@@ -49,9 +51,18 @@ function resolveGlob(data, options) {
         typeof data[key] === "string" &&
         Array.isArray(_procData)
       ) {
+        // No transformStringsToArray is found, put the value back
         acc[key] = data[key];
-        console.log("A path has been found outside an array.");
-        console.log("You might need to use 'transformStringsToArray' option.");
+
+        // If it is a file, warn the user; no nothing otherwise
+        if (_procData.length > 1 &&
+              existsSync(path.join(options.baseDir,_procData[0]))
+        ) {
+          console.log([
+            'A path has been found outside an array.',
+            'You might need to use <transformStringsToArray> option.'].join(`\n`)
+          );
+        }
       } else {
         acc[key] = _procData;
       }

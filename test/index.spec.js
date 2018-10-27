@@ -1,6 +1,7 @@
-const should = require("should");
-const loader = require("../index");
 const path = require("path");
+const loader = require('../');
+
+
 
 function load(content, params) {
   const options = {
@@ -14,14 +15,19 @@ function load(content, params) {
 }
 const opts = { baseDir: path.join(__dirname, "files/") };
 
+console.log = jest.fn(()=>{});
+
 describe("json glob loader", () => {
-  it("returns empty object when json empty JSON is used", () => {
-    load("{}", opts)
-      .trim()
-      .should.equal("{}");
+
+  beforeEach(()=> {
+    console.log.mockClear();
   });
 
-  it("returns same JSON when no globable string found", () => {
+  test("returns empty object when json empty JSON is used", () => {
+    expect(load("{}", opts).trim()).toBe("{}");
+  });
+
+  test("returns same JSON when no globable string found", () => {
     const input = {
       var1: "some data",
       var2: [1, 2, 3, "4"],
@@ -30,9 +36,9 @@ describe("json glob loader", () => {
         "var4.1": "nothing to see"
       }
     };
-    load(JSON.stringify(input), opts).should.equal(JSON.stringify(input));
+    expect(load(JSON.stringify(input), opts)).toBe(JSON.stringify(input));
   });
-  it("returns resolved paths injected on the glob-ed array", () => {
+  test("returns resolved paths injected on the glob-ed array", () => {
     const input = {
       var1: "some data",
       var2: ["*"],
@@ -47,9 +53,9 @@ describe("json glob loader", () => {
         "var4.1": "nothing to see"
       }
     };
-    load(JSON.stringify(input), opts).should.equal(JSON.stringify(expected));
+    expect(load(JSON.stringify(input), opts)).toBe(JSON.stringify(expected));
   });
-  it("returns resolved paths injected on the glob-ed array with mixed content", () => {
+  test("returns resolved paths injected on the glob-ed array with mixed content", () => {
     const input = {
       var1: "some data",
       var2: ["first", "*", "last"],
@@ -64,39 +70,43 @@ describe("json glob loader", () => {
         "var4.1": "nothing to see"
       }
     };
-    load(JSON.stringify(input), opts).should.equal(JSON.stringify(expected));
+    expect(load(JSON.stringify(input), opts)).toBe(JSON.stringify(expected));
   });
-  it("omits an out of array string, even if glob path works when transformStringsToArray === false", () => {
+  test("omits an out of array string, even if glob path works when transformStringsToArray === false", () => {
     const input = {
       var1: "*"
     };
     const expected = {
       var1: "*"
     };
-    load(JSON.stringify(input), opts).should.equal(JSON.stringify(expected));
+    expect(load(JSON.stringify(input), opts)).toBe(JSON.stringify(expected));
+    expect(console.log.mock.calls.length).toEqual(1);
   });
-  it("replace string with array when a glob pattern is pass on a string and transformStringsToArray === true", () => {
+  test("replace string with array when a glob pattern is pass on a string and transformStringsToArray === true", () => {
     const input = {
       var1: "foo*"
     };
     const expected = {
       var1: ["foo.1", "foo.2"]
     };
-    load(JSON.stringify(input), {
-      ...opts,
-      transformStringsToArray: true
-    }).should.equal(JSON.stringify(expected));
+    expect(
+      load(JSON.stringify(input), {
+        ...opts,
+        transformStringsToArray: true
+      })
+    ).toBe(JSON.stringify(expected));
+    expect(console.log.mock.calls.length).toEqual(0);
   });
-  it("return a single item array when only one item matches", () => {
+  test("return a single item array when only one item matches", () => {
     const input = {
       var1: ["*.1"]
     };
     const expected = {
       var1: ["foo.1"]
     };
-    load(JSON.stringify(input), opts).should.equal(JSON.stringify(expected));
+    expect(load(JSON.stringify(input), opts)).toBe(JSON.stringify(expected));
   });
-  it("return an array when a string matches a path and transformStringsToArray === true", () => {
+  test("return an array when a string matches a path and transformStringsToArray === true", () => {
     const opts2 = { ...opts, transformStringsToArray: true};
     const input = {
       var1: "*"
@@ -104,9 +114,9 @@ describe("json glob loader", () => {
     const expected = {
       var1: ["bar", "foo.1", "foo.2"]
     };
-    load(JSON.stringify(input), opts2).should.equal(JSON.stringify(expected));
+    expect(load(JSON.stringify(input), opts2)).toBe(JSON.stringify(expected));
   });
-  it("passes by and apply globOptions", () => {
+  test("passes by and apply globOptions", () => {
     const opts2 = { ...opts, globOptions : { ignore : "**/foo.2" } };
     const input = {
       var1: ["*"]
@@ -115,6 +125,27 @@ describe("json glob loader", () => {
       var1: ["bar", "foo.1"]
     };
 
-    load(JSON.stringify(input), opts2).should.equal(JSON.stringify(expected));
+    expect(load(JSON.stringify(input), opts2)).toBe(JSON.stringify(expected));
+  });
+
+  test("should warn if a path is found outside an array, and return unresolved", () => {
+    const input = {
+      var1: "foo*"
+    };
+    const expected = {
+      var1: "foo*"
+    };
+    expect(load(JSON.stringify(input), opts)).toBe(JSON.stringify(expected));
+    expect(console.log.mock.calls.length).toEqual(1);
+  });
+  test("should *not* warn if an string is found outside an array, not resolving to a file, and return unresolved", () => {
+    const input = {
+      var1: "not-file*"
+    };
+    const expected = {
+      var1: "not-file*"
+    };
+    expect(load(JSON.stringify(input), opts)).toBe(JSON.stringify(expected));
+    expect(console.log.mock.calls.length).toEqual(0);
   });
 });

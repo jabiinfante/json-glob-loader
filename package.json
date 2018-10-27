@@ -4,7 +4,7 @@
   "description": "webpack JSON loader which will search and resolve file paths expressed using glob patterns.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/index.spec.js"
+    "test": "jest test/index.spec.js"
   },
   "keywords": [
     "webpack",
@@ -30,7 +30,6 @@
     "schema-utils": "^1.0.0"
   },
   "devDependencies": {
-    "mocha": "^5.2.0",
-    "should": "^13.2.3"
+    "jest": "^23.6.0"
   }
 }
